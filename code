@@ -1,0 +1,25 @@
+import requests
+import time
+from bs4 import BeautifulSoup
+
+
+def douban_movie_T250(url):
+  headers = {
+    'Referer': 'https://movie.douban.com/top250',
+    'Upgrade-Insecure-Requests': '1',
+    'User-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36'
+  }
+  res = requests.get(url, headers=headers)
+  soup = BeautifulSoup(res.text, 'html.parser')
+  items = soup.find_all('div', class_='hd')
+  for i in items:
+    tag = i.find('a')
+    name = tag.find(class_='title').text
+    link = tag['href']
+    print(name, link)
+
+
+url = ['https://movie.douban.com/top250?start={}&filter='.format(num * 25) for num in range(10)]
+for i in url:
+  douban_movie_T250(i)
+  time.sleep(1)
